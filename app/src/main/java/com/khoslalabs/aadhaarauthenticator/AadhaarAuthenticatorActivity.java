@@ -20,6 +20,7 @@ import com.aadhaarconnect.bridge.capture.model.common.Location;
 import com.aadhaarconnect.bridge.capture.model.common.LocationType;
 import com.aadhaarconnect.bridge.capture.model.common.request.CertificateType;
 import com.aadhaarconnect.bridge.capture.model.common.request.Modality;
+import com.aadhaarconnect.bridge.capture.model.common.request.ModalityType;
 import com.google.gson.Gson;
 
 public class AadhaarAuthenticatorActivity extends AppCompatActivity {
@@ -57,16 +58,17 @@ public class AadhaarAuthenticatorActivity extends AppCompatActivity {
 
         radioAuthenticationGroup = (RadioGroup) findViewById(R.id.radioAuthentication);
 
-        radioAuthenticationGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        radioAuthenticationButton = (RadioButton) findViewById(R.id.radioDemographic);
+
+        radioAuthenticationGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // checkedId is the RadioButton selected
                 radioAuthenticationButton = (RadioButton) findViewById(checkedId);
-                if(radioAuthenticationButton.getText().equals("Fingerprint Auth")){
+                if (radioAuthenticationButton.getText().equals("Fingerprint Auth")) {
                     aadhaarNameTextView.setVisibility(View.GONE);
-                }
-                else if(radioAuthenticationButton.getText().equals("Demographic Auth")){
+                } else if (radioAuthenticationButton.getText().equals("Demographic Auth")) {
                     aadhaarNameTextView.setVisibility(View.VISIBLE);
                 }
                 Toast.makeText(AadhaarAuthenticatorActivity.this,
@@ -96,16 +98,24 @@ public class AadhaarAuthenticatorActivity extends AppCompatActivity {
 
         AuthCaptureRequest authCaptureRequest = new AuthCaptureRequest();
         authCaptureRequest.setAadhaar(aadhaarNumberTextView.getText().toString());
-        authCaptureRequest.setModality(Modality.demo);
         authCaptureRequest.setCertificateType(CertificateType.preprod);
 
-        Demographics demo = new Demographics();
-        Demographics.Name name = new Demographics.Name();
-        name.setMatchingStrategy(Demographics.MatchingStrategy.exact);
-        name.setNameValue(aadhaarNameTextView.getText().toString());
+        if(radioAuthenticationButton.getText().equals("Demographic Auth")) {
+            authCaptureRequest.setModality(Modality.demo);
 
-        demo.setName(name);
-        authCaptureRequest.setDemographics(demo);
+            Demographics demo = new Demographics();
+            Demographics.Name name = new Demographics.Name();
+            name.setMatchingStrategy(Demographics.MatchingStrategy.exact);
+            name.setNameValue(aadhaarNameTextView.getText().toString());
+
+            demo.setName(name);
+            authCaptureRequest.setDemographics(demo);
+        }
+        else if (radioAuthenticationButton.getText().equals("Fingerprint Auth")){
+            authCaptureRequest.setModality(Modality.biometric);
+            authCaptureRequest.setModalityType(ModalityType.fp);
+            authCaptureRequest.setNumOffingersToCapture(2);
+        }
 
         Location loc = new Location();
         loc.setType(LocationType.pincode);
