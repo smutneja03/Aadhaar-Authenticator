@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Aadhaar Authenticator</string>
+    <string name="action_settings">Settings</string>
+    <string name="barcode_image">Barcode Image</string>
+    <string name="authenticate">Authenticate</string>
+
+    <string name="radio_demographic">Demographic Auth</string>
+    <string name="radio_fingerprint">Fingerprint Auth</string>
+
+    <string name="authentication_mode">Authentication Mode</string>
+
+</resources>
